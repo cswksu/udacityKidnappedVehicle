@@ -30,26 +30,25 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
    * NOTE: Consult particle_filter.h for more information about this method 
    *   (and others in this file).
    */
-	vector<Particle> p;
-	double tempX;
-	double tempY;
-	double tempTheta;
-	Particle tempP;
-	std::default_random_engine gen;
-	std::normal_distribution<double> dist_x(x, std[0]);
-	std::normal_distribution<double> dist_y(y, std[1]);
-	std::normal_distribution<double> dist_theta(theta, std[2]);
-	for (int i = 0; i < num_particles; i++) {
-		tempX = dist_x(gen);
-		tempY = dist_y(gen);
-		tempTheta = dist_theta(gen);
-		tempP.x = tempX;
-		tempP.y = tempY;
-		tempP.theta = tempTheta;
-		tempP.weight = 1;
-		tempP.id = i;
-		p.push_back(tempP);
-	}
+  num_particles = 100;
+  double tempX;
+  double tempY;
+  double tempTheta;
+  std::default_random_engine gen;
+  std::normal_distribution<double> dist_x(x, std[0]);
+  std::normal_distribution<double> dist_y(y, std[1]);
+  std::normal_distribution<double> dist_theta(theta, std[2]);
+  for (int i = 0; i < num_particles; i++) {
+    tempX = dist_x(gen);
+    tempY = dist_y(gen);
+    tempTheta = dist_theta(gen);
+    tempP.x = tempX;
+    tempP.y = tempY;
+    tempP.theta = tempTheta;
+    tempP.weight = 1;
+    tempP.id = i;
+    particles.push_back(tempP);
+  }
 
 }
 
@@ -62,6 +61,15 @@ void ParticleFilter::prediction(double delta_t, double std_pos[],
    *  http://en.cppreference.com/w/cpp/numeric/random/normal_distribution
    *  http://www.cplusplus.com/reference/random/default_random_engine/
    */
+  std::default_random_engine gen;
+  std::normal_distribution<double> dist_x(0, std_pos[0]);
+  std::normal_distribution<double> dist_y(0, std_pos[1]);
+  std::normal_distribution<double> dist_theta(0, std_pos[2]);
+  for (int i = 0; i < num_particles; i++) {
+    particles[i].x += velocity / yaw_rate * (sin(particles[i].theta + yaw_rate * delta_t) - sin(particles[i]))+dist_x(gen);
+    particles[i].y += velocity / yaw_rate * (cos(particles[i].theta)-cos(particles[i].theta+yaw_rate*delta_t));
+    particles[i].theta += yaw_rate * delta_t;
+  }
 
 }
 
@@ -75,6 +83,29 @@ void ParticleFilter::dataAssociation(vector<LandmarkObs> predicted,
    *   probably find it useful to implement this method and use it as a helper 
    *   during the updateWeights phase.
    */
+  double tempMinDist = 999;
+  int tempMinIdx = -1;
+  double x_dist;
+  double y_dist;
+  double compareDist;
+  // for each observation
+  for (int i = 0; i < observations.size(); i++) {
+    //loop through all predictions to find closest prediction
+    tempMinDist = 999;
+    tempMinIdx = -1;
+    for (int j = 0; j < predicted.size(); j++) {
+      x_dist = observations[i].x - predicted[j].x;
+      y_dist= observations[i].x - predicted[j].x;
+      compareDist = sqrt(pow(x_dist, 2) + pow(y_dist, 2));
+      if (compareDist < tempMinDist) {
+        tempMinDist = compareDist;
+        tempMinIdx = j;
+      }
+
+
+    }
+    observations[i].id = tempMinIdx;
+  }
 
 }
 
