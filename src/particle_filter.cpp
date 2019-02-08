@@ -129,7 +129,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
   vector<LandmarkObs> pred;
   LandmarkObs tempPred;
   double tempDist;
-  double w_prefix = 1 / (2 * M_PI*std_landmark[0] * std_landmark[1]);
+  double w_prefix = 1.0 / (2.0 * M_PI*std_landmark[0] * std_landmark[1]);
   double tempWeight;
   for (int i = 0; i < num_particles; i++) {
     pred.clear();
@@ -143,6 +143,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
       tempTransObs.id = observations[j].id;
       transObs.push_back(tempTransObs);
     }
+    int match_count = 0;
     for (int j = 0; j < map_landmarks.landmark_list.size(); j++) {
       tempDist = dist(particles[i].x, particles[i].y, map_landmarks.landmark_list[j].x_f, map_landmarks.landmark_list[j].y_f);
       if (tempDist < sensor_range) {
@@ -150,10 +151,15 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
         tempPred.x = map_landmarks.landmark_list[j].x_f;
         tempPred.y = map_landmarks.landmark_list[j].y_f;
         pred.push_back(tempPred);
-
+        match_count++;
       }
     }
     dataAssociation(pred, transObs);
+    if (match_count <observations.size()) {
+      tempWeight = 0;
+    }
+
+
     for (int j = 0; j < observations.size(); j++) {
       tempWeight *= w_prefix*exp(-(pow(observations[j].x - map_landmarks.landmark_list[observations[j].id].x_f, 2) / (2 * pow(std_landmark[0], 2)) + pow(observations[j].y - map_landmarks.landmark_list[observations[j].id].y_f, 2) / (2 * pow(std_landmark[1], 2))));
     }
