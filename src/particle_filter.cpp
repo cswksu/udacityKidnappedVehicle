@@ -157,7 +157,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
     }
     dataAssociation(pred, transObs);
     std::cout << observations.size() << std::endl;
-    if (match_count <observations.size()) {
+    if (match_count ==0) {
       tempWeight = 0;
     }
     else {
