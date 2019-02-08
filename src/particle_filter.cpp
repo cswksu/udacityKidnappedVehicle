@@ -168,7 +168,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
       for (int j = 0; j < observations.size(); j++) {
         tempWeight *= w_prefix * exp(-(pow(transObs[j].x - map_landmarks.landmark_list[transObs[j].id].x_f, 2) / (2 * pow(std_landmark[0], 2)) + pow(transObs[j].y - map_landmarks.landmark_list[transObs[j].id].y_f, 2) / (2 * pow(std_landmark[1], 2))));
       }
-      std::cout << tempWeight << std::endl;
+      //std::cout << tempWeight << std::endl;
     }
     particles[i].weight = tempWeight;
   }
