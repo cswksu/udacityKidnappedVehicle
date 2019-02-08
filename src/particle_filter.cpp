@@ -93,7 +93,7 @@ void ParticleFilter::dataAssociation(vector<LandmarkObs> predicted,
     tempMinDist = 999;
     tempMinIdx = -1;
     for (int j = 0; j < predicted.size(); j++) {
-      compareDist = dist(observation[i].x, observation[i].y, predicted[j].x, predicted[j].y);
+      compareDist = dist(observations[i].x, observations[i].y, predicted[j].x, predicted[j].y);
       if (compareDist < tempMinDist) {
         tempMinDist = compareDist;
         tempMinIdx = j;
