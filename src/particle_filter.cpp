@@ -130,8 +130,8 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
   LandmarkObs tempPred;
   double tempDist;
   for (int i = 0; i < num_particles; i++) {
-    pred.clear;
-    transObs.clear;
+    pred.clear();
+    transObs.clear();
     for (int j = 0; j < observations.size(); j++) {
       xm = cos(particles[i].theta)*observations[j].x - sin(particles[i].theta)*observations[j].y + particles[i].x;
       ym = sin(particles[i].theta)*observations[j].x + cos(particles[i].theta)*observations[j].y + particles[i].y;
