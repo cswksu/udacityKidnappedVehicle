@@ -129,9 +129,12 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
   vector<LandmarkObs> pred;
   LandmarkObs tempPred;
   double tempDist;
+  double w_prefix = 1 / (2 * M_PI*std_landmark[0] * std_landmark[1]);
+  double tempWeight;
   for (int i = 0; i < num_particles; i++) {
     pred.clear();
     transObs.clear();
+    tempWeight = 1;
     for (int j = 0; j < observations.size(); j++) {
       xm = cos(particles[i].theta)*observations[j].x - sin(particles[i].theta)*observations[j].y + particles[i].x;
       ym = sin(particles[i].theta)*observations[j].x + cos(particles[i].theta)*observations[j].y + particles[i].y;
@@ -151,6 +154,10 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
       }
     }
     dataAssociation(pred, transObs);
+    for (int j = 0; j < observations.size(); j++) {
+      tempWeight *= w_prefix * (pow(observations[j].x - map_landmarks.landmark_list[observations[j].id].x_f, 2) / (2 * pow(std_landmark[0], 2)) + pow(observations[j].y - map_landmarks.landmark_list[observations[j].id].y_f, 2) / (2 * pow(std_landmark[1], 2)));
+    }
+    particle[i].weight = tempWeight;
   }
   
 }
@@ -162,7 +169,19 @@ void ParticleFilter::resample() {
    * NOTE: You may find std::discrete_distribution helpful here.
    *   http://en.cppreference.com/w/cpp/numeric/random/discrete_distribution
    */
-
+  vector<double> idxWeights;
+  for (int i = 0; i < num_particles; i++) {
+    idxWeights.push_back(particle[i].weight);
+  }
+  std::default_random_engine generator;
+  std::discrete_distribution<> distrubution idxWeights;
+  vector<Particle> resampledParticles;
+  for (int i = 0; i < num_particles; i++) {
+    resampledParticles.push_back(particles[distribution(generator)]);
+  }
+  for (int i = 0; i < num_particles; i++) {
+    particles[i]=resampledParticles[i];
+  }
 }
 
 void ParticleFilter::SetAssociations(Particle& particle, 
