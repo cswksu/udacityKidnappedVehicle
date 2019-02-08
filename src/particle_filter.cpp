@@ -86,8 +86,6 @@ void ParticleFilter::dataAssociation(vector<LandmarkObs> predicted,
    */
   double tempMinDist = 999;
   int tempMinIdx = -1;
-  double x_dist;
-  double y_dist;
   double compareDist;
   // for each observation
   for (int i = 0; i < observations.size(); i++) {
@@ -95,9 +93,7 @@ void ParticleFilter::dataAssociation(vector<LandmarkObs> predicted,
     tempMinDist = 999;
     tempMinIdx = -1;
     for (int j = 0; j < predicted.size(); j++) {
-      x_dist = observations[i].x - predicted[j].x;
-      y_dist= observations[i].x - predicted[j].x;
-      compareDist = sqrt(pow(x_dist, 2) + pow(y_dist, 2));
+      compareDist = dist(observation[i].x, observation[i].y, predicted[j].x, predicted[j].y);
       if (compareDist < tempMinDist) {
         tempMinDist = compareDist;
         tempMinIdx = j;
@@ -105,7 +101,7 @@ void ParticleFilter::dataAssociation(vector<LandmarkObs> predicted,
 
 
     }
-    observations[i].id = tempMinIdx;
+    //observations[i].id = tempMinIdx;
   }
 
 }
@@ -126,6 +122,21 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
    *   and the following is a good resource for the actual equation to implement
    *   (look at equation 3.33) http://planning.cs.uiuc.edu/node99.html
    */
+  double xm;
+  double ym;
+  vector<LandmarkObs> transObs;
+  LandmarkObs tempTransObs;
+  for (int i = 0; i < num_particles; i++) {
+    for (int j = 0; j < observations.size(); j++) {
+      xm = cos(particles[i].theta)*observations[j].x - sin(particles[i].theta)*observations[j].y + particles[i].x;
+      ym = sin(particles[i].theta)*observations[j].x + cos(particles[i].theta)*observations[j].y + particles[i].y;
+      tempTransObs.x = xm;
+      tempTransObs.y = ym;
+      tempTransObs.id = observations[j].id;
+      transObs.push_back(tempTransObs);
+    }
+      
+  }
 
 }
 
