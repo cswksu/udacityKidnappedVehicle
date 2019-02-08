@@ -131,6 +131,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
   LandmarkObs tempPred;
   double tempDist;
   double w_prefix = 1.0 / (2.0 * M_PI*std_landmark[0] * std_landmark[1]);
+  std::cout << w_prefix << std::endl;
   double tempWeight;
   for (int i = 0; i < num_particles; i++) {
     pred.clear();
