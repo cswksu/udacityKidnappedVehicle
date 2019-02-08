@@ -174,10 +174,10 @@ void ParticleFilter::resample() {
     idxWeights.push_back(particles[i].weight);
   }
   std::default_random_engine generator;
-  std::discrete_distribution<> distribution &idxWeights[0];
+  std::discrete_distribution<> distrib &idxWeights[0];
   vector<Particle> resampledParticles;
   for (int i = 0; i < num_particles; i++) {
-    resampledParticles.push_back(particles[distribution(generator)]);
+    resampledParticles.push_back(particles[distrib(generator)]);
   }
   for (int i = 0; i < num_particles; i++) {
     particles[i]=resampledParticles[i];
