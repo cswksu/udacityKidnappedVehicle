@@ -101,7 +101,7 @@ void ParticleFilter::dataAssociation(vector<LandmarkObs> predicted,
 
 
     }
-    //observations[i].id = tempMinIdx;
+    observations[i].id = predicted[tempMinIdx].id;
   }
 
 }
@@ -126,7 +126,12 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
   double ym;
   vector<LandmarkObs> transObs;
   LandmarkObs tempTransObs;
+  vector<LandmarkObs> pred;
+  LandmarkObs tempPred;
+  double tempDist;
   for (int i = 0; i < num_particles; i++) {
+    pred.clear;
+    transObs.clear;
     for (int j = 0; j < observations.size(); j++) {
       xm = cos(particles[i].theta)*observations[j].x - sin(particles[i].theta)*observations[j].y + particles[i].x;
       ym = sin(particles[i].theta)*observations[j].x + cos(particles[i].theta)*observations[j].y + particles[i].y;
@@ -135,9 +140,19 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
       tempTransObs.id = observations[j].id;
       transObs.push_back(tempTransObs);
     }
-      
-  }
+    for (int j = 0; j < map_landmarks.landmark_list.size(); j++) {
+      tempDist = dist(particles[i].x, particles[i].y, map_landmarks.landmark_list[j].x, map_landmarks.landmark_list[j].y);
+      if (tempDist < sensor_range) {
+        tempPred.id = map_landmarks.landmark_list[j].id_i;
+        tempPred.x = map_landmarks.landmark_list[j].x;
+        tempPred.y = map_landmarks.landmark_list[j].y;
+        pred.push_back(tempPred);
 
+      }
+    }
+    dataAssociation(pred, transObs);
+  }
+  
 }
 
 void ParticleFilter::resample() {
