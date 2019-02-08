@@ -50,6 +50,7 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
     tempP.id = i;
     particles.push_back(tempP);
   }
+  is_initialized = true;
 
 }
 
@@ -68,8 +69,8 @@ void ParticleFilter::prediction(double delta_t, double std_pos[],
   std::normal_distribution<double> dist_theta(0, std_pos[2]);
   for (int i = 0; i < num_particles; i++) {
     particles[i].x += velocity / yaw_rate * (sin(particles[i].theta + yaw_rate * delta_t) - sin(particles[i].theta))+dist_x(gen);
-    particles[i].y += velocity / yaw_rate * (cos(particles[i].theta)-cos(particles[i].theta+yaw_rate*delta_t));
-    particles[i].theta += yaw_rate * delta_t;
+    particles[i].y += velocity / yaw_rate * (cos(particles[i].theta)-cos(particles[i].theta+yaw_rate*delta_t))+dist_y(gen);
+    particles[i].theta += yaw_rate * delta_t+dist_theta(gen);
   }
 
 }
