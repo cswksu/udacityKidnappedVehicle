@@ -157,7 +157,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
     for (int j = 0; j < observations.size(); j++) {
       tempWeight *= w_prefix * (pow(observations[j].x - map_landmarks.landmark_list[observations[j].id].x_f, 2) / (2 * pow(std_landmark[0], 2)) + pow(observations[j].y - map_landmarks.landmark_list[observations[j].id].y_f, 2) / (2 * pow(std_landmark[1], 2)));
     }
-    particle[i].weight = tempWeight;
+    particles[i].weight = tempWeight;
   }
   
 }
@@ -171,10 +171,10 @@ void ParticleFilter::resample() {
    */
   vector<double> idxWeights;
   for (int i = 0; i < num_particles; i++) {
-    idxWeights.push_back(particle[i].weight);
+    idxWeights.push_back(particles[i].weight);
   }
   std::default_random_engine generator;
-  std::discrete_distribution<> distrubution idxWeights;
+  std::discrete_distribution<> distrubution &idxWeights[0];
   vector<Particle> resampledParticles;
   for (int i = 0; i < num_particles; i++) {
     resampledParticles.push_back(particles[distribution(generator)]);
