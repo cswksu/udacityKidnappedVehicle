@@ -141,11 +141,11 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
       transObs.push_back(tempTransObs);
     }
     for (int j = 0; j < map_landmarks.landmark_list.size(); j++) {
-      tempDist = dist(particles[i].x, particles[i].y, map_landmarks.landmark_list[j].x, map_landmarks.landmark_list[j].y);
+      tempDist = dist(particles[i].x, particles[i].y, map_landmarks.landmark_list[j].x_f, map_landmarks.landmark_list[j].y_f);
       if (tempDist < sensor_range) {
         tempPred.id = map_landmarks.landmark_list[j].id_i;
-        tempPred.x = map_landmarks.landmark_list[j].x;
-        tempPred.y = map_landmarks.landmark_list[j].y;
+        tempPred.x = map_landmarks.landmark_list[j].x_f;
+        tempPred.y = map_landmarks.landmark_list[j].y_f;
         pred.push_back(tempPred);
 
       }
