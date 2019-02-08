@@ -131,7 +131,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
   LandmarkObs tempPred;
   double tempDist;
   double w_prefix = 1.0 / (2.0 * M_PI*std_landmark[0] * std_landmark[1]);
-  std::cout << w_prefix << std::endl;
+  //std::cout << w_prefix << std::endl;
   double tempWeight;
   for (int i = 0; i < num_particles; i++) {
     pred.clear();
@@ -166,7 +166,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
     else {
       dataAssociation(pred, transObs);
       for (int j = 0; j < observations.size(); j++) {
-        tempWeight *= w_prefix * exp(-(pow(observations[j].x - map_landmarks.landmark_list[observations[j].id].x_f, 2) / (2 * pow(std_landmark[0], 2)) + pow(observations[j].y - map_landmarks.landmark_list[observations[j].id].y_f, 2) / (2 * pow(std_landmark[1], 2))));
+        tempWeight *= w_prefix * exp(-(pow(transObs[j].x - map_landmarks.landmark_list[transObs[j].id].x_f, 2) / (2 * pow(std_landmark[0], 2)) + pow(transObs[j].y - map_landmarks.landmark_list[transObs[j].id].y_f, 2) / (2 * pow(std_landmark[1], 2))));
       }
       std::cout << tempWeight << std::endl;
     }
